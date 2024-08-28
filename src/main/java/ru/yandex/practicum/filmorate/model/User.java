@@ -33,7 +33,7 @@ public class User {
     }
 
     public String getName() {
-        if (name == null) {
+        if (name == null || name.equals("")) {
             setName(login);
         }
         return name;
