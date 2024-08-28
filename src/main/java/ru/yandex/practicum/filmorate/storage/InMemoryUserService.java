@@ -38,7 +38,7 @@ public class InMemoryUserService implements UserInterface {
                 .findAny();
         if (userOptional.isPresent()) {
             log.debug("User`s " + user.getLogin() + " profile has been updated");
-            return userOptional.get();
+            return user;
         } else {
             log.warn("User was not found");
             throw new UserNotFoundException("Incorrect user details");

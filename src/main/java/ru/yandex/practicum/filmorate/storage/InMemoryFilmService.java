@@ -31,7 +31,7 @@ public class InMemoryFilmService implements FilmInterface {
                 .findAny();
         if (filmOptional.isPresent()) {
             log.debug("Film " + film.getName() + " has been updated");
-            return filmOptional.get();
+            return film;
         } else {
             log.warn("Film was not found");
             throw new FilmNotFoundException("Incorrect film details");
