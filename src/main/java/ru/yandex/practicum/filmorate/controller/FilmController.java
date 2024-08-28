@@ -19,7 +19,7 @@ public class FilmController {
         return service.addFilm(film);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public Film updateFilm(@Valid @RequestBody Film film) {
         return service.updateFilm(film);
     }

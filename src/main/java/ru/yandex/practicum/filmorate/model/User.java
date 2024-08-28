@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public class User {
     private int id;
-    @Email(regexp = "^[a-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$", message = "Incorrect email format")
+    @Email(regexp = "^[A-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$", message = "Incorrect email format")
     private String email;
     @NotEmpty
     @NotNull
