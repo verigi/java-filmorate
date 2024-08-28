@@ -31,4 +31,11 @@ public class User {
         this.login = login;
         this.birthday = birthday;
     }
+
+    public String getName() {
+        if (name == null) {
+            setName(login);
+        }
+        return name;
+    }
 }

@@ -21,9 +21,6 @@ public class InMemoryUserService implements UserInterface {
         log.debug("Adding user: " + user.getLogin());
         Integer userId = generateId();
         user.setId(userId);
-        if (user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         service.put(user.getId(), user);
         log.debug("User added: " + user.getLogin());
         return service.get(user.getId());
