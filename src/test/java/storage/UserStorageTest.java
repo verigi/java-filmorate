@@ -13,30 +13,30 @@ public class UserStorageTest extends StorageTest {
     @Override
     public void init() {
         service.deleteAllUsers();
-        service.addUser(user_1);
-        service.addUser(user_2);
+        service.addUser(user1);
+        service.addUser(user2);
     }
 
     @Test
     @DisplayName("Adding user to user storage")
     public void shouldAddUserToUserStorage() {
-        service.addUser(user_3);
+        service.addUser(user3);
         Assertions.assertEquals(3, service.getAllUsers().size());
     }
 
     @Test
     @DisplayName("Adding user with empty name")
     public void shouldPlaceLoginAsName() {
-        service.addUser(user_4);
+        service.addUser(user4);
         Assertions.assertEquals("test_login_4", service.getUserById(3).getName());
     }
 
     @Test
     @DisplayName("Updating existing user")
     public void shouldUpdateDetailsOfUserProfile() {
-        user_1.setName("Test_Film_1_Upd");
-        service.updateUser(user_1);
-        Assertions.assertEquals("Test_Film_1_Upd", user_1.getName());
+        user1.setName("Test_Film_1_Upd");
+        service.updateUser(user1);
+        Assertions.assertEquals("Test_Film_1_Upd", user1.getName());
     }
 
     @Test
@@ -44,20 +44,20 @@ public class UserStorageTest extends StorageTest {
     public void shouldDeleteUserFromUserStorage() {
         service.deleteUserById(1);
         Assertions.assertEquals(1, service.getAllUsers().size());
-        Assertions.assertEquals(List.of(user_2), service.getAllUsers());
+        Assertions.assertEquals(List.of(user2), service.getAllUsers());
     }
 
     @Test
     @DisplayName("Getting user from user storage")
     public void shouldReturnCertainUserFromStorage() {
-        Assertions.assertEquals(user_1, service.getUserById(1));
+        Assertions.assertEquals(user1, service.getUserById(1));
     }
 
     @Test
     @DisplayName("Clearing user`s storage")
     public void shouldCleanUsersStorage() {
-        service.addUser(user_3);
-        service.addUser(user_4);
+        service.addUser(user3);
+        service.addUser(user4);
         service.deleteAllUsers();
         Assertions.assertEquals(Collections.EMPTY_LIST, service.getAllUsers());
     }
