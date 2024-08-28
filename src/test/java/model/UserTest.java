@@ -38,7 +38,7 @@ public class UserTest {
 
     @Test
     @DisplayName("Incorrect email check")
-    public void shouldNotCreateUserWithIncorrectEmail(){
+    public void shouldNotCreateUserWithIncorrectEmail() {
         Arrays.stream(incorrectEmails).forEach((email) -> {
             User user = User.builder()
                     .email(email)
@@ -51,7 +51,7 @@ public class UserTest {
 
     @Test
     @DisplayName("Correct email check")
-    public void shouldCreateUserWithCorrectEmail(){
+    public void shouldCreateUserWithCorrectEmail() {
         Arrays.stream(correctEmails).forEach((email) -> {
             User user = User.builder()
                     .email(email)
@@ -89,7 +89,7 @@ public class UserTest {
 
     @Test
     @DisplayName("Incorrect birthday check")
-    public void shouldNotCreateUserWithCorrectBirthday(){
+    public void shouldNotCreateUserWithCorrectBirthday() {
         User user  = User.builder()
                 .email("test@yandex.ru")
                 .login("Test")
@@ -101,7 +101,7 @@ public class UserTest {
 
     @Test
     @DisplayName("Correct bithday check")
-    public void shouldCreateUserWithCorrectBirthday(){
+    public void shouldCreateUserWithCorrectBirthday() {
         User user  = User.builder()
                 .email("test@yandex.ru")
                 .login("Test")
