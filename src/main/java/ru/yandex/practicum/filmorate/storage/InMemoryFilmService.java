@@ -19,17 +19,14 @@ public class InMemoryFilmService implements FilmInterface {
         film.setId(filmId);
         service.put(filmId, film);
         log.debug("Film added: " + film.getName());
-        return service.get(filmId);
+        return film;
     }
 
     @Override
     public Film updateFilm(Film film) throws FilmNotFoundException {
         log.debug("Updating film: " + film.getName());
-        Optional<Film> filmOptional = service.keySet().stream()
-                .filter(key -> key == film.getId())
-                .map(key -> service.put(key, film))
-                .findAny();
-        if (filmOptional.isPresent()) {
+        if (!service.get(film.getId()).equals(null)) {
+            service.put(film.getId(), film);
             log.debug("Film " + film.getName() + " has been updated");
             return film;
         } else {
@@ -53,13 +50,9 @@ public class InMemoryFilmService implements FilmInterface {
     @Override
     public Film getFilmById(Integer id) throws FilmNotFoundException {
         log.debug("Getting film. Id: " + id);
-        Optional<Film> filmOptional = service.keySet().stream()
-                .filter(key -> key.equals(id))
-                .map(service::get)
-                .findAny();
-        if (filmOptional.isPresent()) {
+        if (!service.get(id).equals(null)) {
             log.debug("Film id " + id + " has been found");
-            return filmOptional.get();
+            return service.get(id);
         } else {
             log.warn("Film id " + id + " was not found");
             throw new FilmNotFoundException("Incorrect id");

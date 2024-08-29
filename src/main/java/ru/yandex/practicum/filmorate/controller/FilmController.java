@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmService;
 
 import java.util.Collection;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {

@@ -11,6 +11,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 
+/*
+Привет, Ирек! Спасибо за комментарии и поправки!
+Пара вопросов, если позволишь:
+1. Я правильно понимаю, что повторное обращение за сущностью в хранилище нежелательно по причине потери
+производительности?
+2. Касаемо Optional и Stream - хотел "козырнуть", применить на практике) Тут такой вопрос к тебе, как к опытному
+разработчику: насколько важно уметь решать задачи с Codewars и Leetcode? Дело в том, что простые задачи (kyu 8,7,6 -
+если брать в пример Codewars) решаю достаточно легко/относительно легко, но вот более сложные даются прям со скрипом.
+И вот, собственно, вопрос: что более практично - натаскивать себя, делать упор на задачи или разрабатывать дополнительно
+сторонний пет-проект?
+ */
 @Slf4j
 public class InMemoryUserService implements UserInterface {
     private final HashMap<Integer, User> service = new HashMap<>();
@@ -23,17 +34,14 @@ public class InMemoryUserService implements UserInterface {
         user.setId(userId);
         service.put(user.getId(), user);
         log.debug("User added: " + user.getLogin());
-        return service.get(user.getId());
+        return user;
     }
 
     @Override
     public User updateUser(User user) {
         log.debug("Updating user: " + user.getLogin());
-        Optional<User> userOptional = service.keySet().stream()
-                .filter(key -> key == user.getId())
-                .map(key -> service.put(key, user))
-                .findAny();
-        if (userOptional.isPresent()) {
+        if (!service.get(user.getId()).equals(null)) {
+            service.put(user.getId(), user);
             log.debug("User`s " + user.getLogin() + " profile has been updated");
             return user;
         } else {
@@ -57,13 +65,9 @@ public class InMemoryUserService implements UserInterface {
     @Override
     public User getUserById(Integer id) {
         log.debug("Getting user. Id: " + id);
-        Optional<User> userOptional = service.keySet().stream()
-                .filter(key -> key.equals(id))
-                .map(service::get)
-                .findAny();
-        if (userOptional.isPresent()) {
+        if (!service.get(id).equals(null)) {
             log.debug("User id " + id + " has been found");
-            return userOptional.get();
+            return service.get(id);
         } else {
             log.warn("User id " + id + " was not found");
             throw new FilmNotFoundException("Incorrect id");
