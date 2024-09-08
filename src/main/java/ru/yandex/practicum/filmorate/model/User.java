@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +27,7 @@ public class User {
     @Past(message = "The birthday should be in the past")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
+    private final Set<Integer> friends = new HashSet<>();
 
     public User(String email, String login, LocalDate birthday) {
         this.email = email;

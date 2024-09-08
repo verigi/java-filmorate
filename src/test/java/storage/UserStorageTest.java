@@ -1,13 +1,13 @@
 package storage;
 
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.Collections;
 import java.util.List;
 
 public class UserStorageTest extends StorageTest {
-    InMemoryUserService service = new InMemoryUserService();
+    InMemoryUserStorage service = new InMemoryUserStorage();
 
     @BeforeEach
     @Override

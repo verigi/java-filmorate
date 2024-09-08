@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.Collections;
 import java.util.List;
 
 public class FilmStorageTest extends StorageTest {
-    InMemoryFilmService service = new InMemoryFilmService();
+    InMemoryFilmStorage service = new InMemoryFilmStorage();
 
     @BeforeEach
     @Override
