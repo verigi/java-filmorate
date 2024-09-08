@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.IncorrectUserDetails;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
+@Slf4j
 @Service
 public class UserService {
     private final UserStorage userStorage;
@@ -45,6 +46,7 @@ public class UserService {
     }
 
     public void addFriend(Integer userId, Integer friendId) {
+        log.debug("User {} adding friend {}", userId, friendId);
         if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
@@ -53,6 +55,7 @@ public class UserService {
     }
 
     public void deleteFriend(Integer userId, Integer friendId) {
+        log.debug("User {} deleting friend {}", userId, friendId);
         if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
@@ -61,6 +64,7 @@ public class UserService {
     }
 
     public Collection<User> getAllFriends(Integer id) {
+        log.debug("Getting friend list of user {}", id);
         ArrayList<User> friendList = new ArrayList<>();
         User user = userStorage.getUserById(id);
         for (Integer friendId : user.getFriends()) {
@@ -70,6 +74,7 @@ public class UserService {
     }
 
     public Collection<User> getCommonFriends(Integer firstUserId, Integer secondUserId) {
+        log.debug("Getting common friend list of users {} and {}", firstUserId, secondUserId);
         User user1 = userStorage.getUserById(firstUserId);
         User user2 = userStorage.getUserById(secondUserId);
         List<Integer> commonIds = user1.getFriends().stream()
