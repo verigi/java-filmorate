@@ -37,7 +37,7 @@ public class ExceptionController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse otherException(final Throwable e) {
+    public ErrorResponse otherException(final RuntimeException e) {
         log.debug(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
