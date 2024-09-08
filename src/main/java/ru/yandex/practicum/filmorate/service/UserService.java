@@ -43,20 +43,16 @@ public class UserService {
         if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        {
-            user.getFriends().add(friendId);
-            friend.getFriends().add(userId);
-        }
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
     }
 
     public void deleteFriend(Integer userId, Integer friendId) {
         if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        {
-            user.getFriends().remove(friendId);
-            friend.getFriends().remove(userId);
-        }
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
     }
 
     public Collection<User> getAllFriends(Integer id) {
