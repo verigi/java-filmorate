@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.IncorrectUserDetails;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.utils.UserStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,9 +13,13 @@ import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
-    private final UserService userStorage;
+    private final UserStorage userStorage;
+
+    @Autowired
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     public User addUser(User user) {
         return userStorage.addUser(user);
