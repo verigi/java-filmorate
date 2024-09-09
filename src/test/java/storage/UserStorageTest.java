@@ -1,7 +1,7 @@
 package storage;
 
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.storageImpl.InMemoryUserStorage;
 
 import java.util.Collections;
 import java.util.List;
