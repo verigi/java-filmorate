@@ -27,8 +27,6 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     @Autowired
     private UserDbStorage userDbStorage;
-    @Autowired
-    private GenreDbStorage genreDbStorage;
 
     private static final RowMapper<Film> filmRowMapper = (rs, rowNum) -> {
         Film film = new Film();
@@ -58,13 +56,9 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-
-        // Добавление жанров, если они указаны
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             updateFilmGenres(film.getId(), film.getGenres());
         }
-
-        // Извлечение жанров из базы данных
         Set<Genre> genres = extractGenres(film.getId());
         film.setGenres(genres);
 
@@ -73,14 +67,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        getFilm(film.getId());  // Проверка существования фильма
+        getFilm(film.getId());
         String sql = "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? " +
                 "WHERE film_id = ?";
 
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), java.sql.Date.valueOf(film.getReleaseDate()),
                 film.getDuration(), film.getMpa().getId(), film.getId());
 
-        // Обновление жанров
         if (film.getGenres() != null) {
             updateFilmGenres(film.getId(), film.getGenres());
         }
