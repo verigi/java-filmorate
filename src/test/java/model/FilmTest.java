@@ -54,7 +54,8 @@ public class FilmTest {
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        Assertions.assertEquals(1, violations.size());}
+        Assertions.assertEquals(1, violations.size());
+    }
 
     @Test
     @DisplayName("Long description check")
