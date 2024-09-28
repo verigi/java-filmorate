@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.film;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.yandex.practicum.filmorate.validation.film.DateNotEarly;
+import ru.yandex.practicum.filmorate.validation.DateNotEarly;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import java.util.Set;
 public class Film {
     private static final String THE_EARLIEST_RELEASE_DATE = "1895-12-28";
     private int id;
-    @NonNull
+    @NotNull
     @NotEmpty
     private String name;
     @Size(max = 200, message = "Description should be less than 200 symbols")
@@ -26,12 +26,8 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private final Set<Integer> likes = new HashSet<>();
+    private Set<Integer> likes = new HashSet<>();
+    private Set<Genre> genre = new HashSet<>();
+    private Mpa mpa;
 
-    public Film(String name, String description, LocalDate releaseDate, int duration) {
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
 }

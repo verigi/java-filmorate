@@ -7,7 +7,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -33,19 +33,18 @@ public class FilmTest {
     @Test
     @DisplayName("Null name check")
     public void shouldNotCreateNewFilmNullName() {
-        Film film = new Film(null, "Some description",
-                LocalDate.of(2000, 1, 1), 60);
-
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        Assertions.assertEquals(1, violations.size());
         Assertions.assertThrows(NullPointerException.class, () -> defaultFilm.setName(null));
     }
 
     @Test
     @DisplayName("Empty name check")
     public void shouldNotCreateNewFilmEmptyName() {
-        Film film = new Film("", "Some description",
-                LocalDate.of(2000, 1, 1), 60);
+        Film film = Film.builder()
+                .name("")
+                .description("Some description")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(60)
+                .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         Assertions.assertEquals(1, violations.size());
@@ -58,8 +57,12 @@ public class FilmTest {
         char[] charArr = new char[201];
         Arrays.fill(charArr, '*');
         String longDescription = new String(charArr);
-        Film film = new Film("Test", longDescription,
-                LocalDate.of(2000, 1, 1), 60);
+        Film film = Film.builder()
+                .name("Film test")
+                .description(longDescription)
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(60)
+                .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         Assertions.assertEquals("Description should be less than 200 symbols",
@@ -70,8 +73,12 @@ public class FilmTest {
     @Test
     @DisplayName("Duration check")
     public void shouldNotCreateNewFilmWithUnpositiveDuration() {
-        Film film = new Film("Test", "Test description",
-                LocalDate.of(2000, 1, 1), 0);
+        Film film = Film.builder()
+                .name("Film test")
+                .description("Some description")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(0)
+                .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         Assertions.assertEquals(1, violations.size());

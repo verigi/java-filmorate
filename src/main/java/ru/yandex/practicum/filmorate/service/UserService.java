@@ -3,13 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.IncorrectUserDetails;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -30,11 +27,11 @@ public class UserService {
     }
 
     public User deleteUserById(Integer id) {
-        return userStorage.deleteUserById(id);
+        return userStorage.deleteUser(id);
     }
 
     public User getUserById(Integer id) {
-        return userStorage.getUserById(id);
+        return userStorage.getUser(id);
     }
 
     public Collection<User> getAllUsers() {
@@ -46,45 +43,19 @@ public class UserService {
     }
 
     public void addFriend(Integer userId, Integer friendId) {
-        log.debug("User {} adding friend {}", userId, friendId);
-        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        userStorage.addFriend(userId, friendId);
     }
 
     public void deleteFriend(Integer userId, Integer friendId) {
-        log.debug("User {} deleting friend {}", userId, friendId);
-        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        userStorage.deleteFriend(userId, friendId);
     }
 
     public Collection<User> getAllFriends(Integer id) {
-        log.debug("Getting friend list of user {}", id);
-        ArrayList<User> friendList = new ArrayList<>();
-        User user = userStorage.getUserById(id);
-        for (Integer friendId : user.getFriends()) {
-            friendList.add(userStorage.getUserById(friendId));
-        }
-        return friendList;
+        return userStorage.getAllFriends(id);
     }
 
     public Collection<User> getCommonFriends(Integer firstUserId, Integer secondUserId) {
-        log.debug("Getting common friend list of users {} and {}", firstUserId, secondUserId);
-        User user1 = userStorage.getUserById(firstUserId);
-        User user2 = userStorage.getUserById(secondUserId);
-        List<Integer> commonIds = user1.getFriends().stream()
-                .filter(user2.getFriends()::contains)
-                .toList();
-
-        List<User> commonFriends = new ArrayList<>();
-        for (Integer friendId : commonIds) {
-            commonFriends.add(userStorage.getUserById(friendId));
-        }
-        return commonFriends;
+        return userStorage.getCommonFriends(firstUserId, secondUserId);
     }
+
 }

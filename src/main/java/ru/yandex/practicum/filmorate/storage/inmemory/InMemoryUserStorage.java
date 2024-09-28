@@ -1,15 +1,18 @@
-package ru.yandex.practicum.filmorate.storage.storageImpl;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.IncorrectUserDetails;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
 @Slf4j
 @Component
+@Qualifier("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Integer, User> storage = new HashMap<>();
     private Integer id = 0;
@@ -38,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User deleteUserById(Integer id) {
+    public User deleteUser(Integer id) {
         log.debug("Deleting user`s profile. Id: " + id);
         if (storage.containsKey(id)) {
             log.debug("User id " + id + " has been deleted");
@@ -50,7 +53,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(Integer id) {
+    public User getUser(Integer id) {
         log.debug("Getting user. Id: " + id);
         if (storage.containsKey(id)) {
             log.debug("User id " + id + " has been found");
@@ -71,6 +74,53 @@ public class InMemoryUserStorage implements UserStorage {
     public void deleteAllUsers() {
         log.debug("Deleting all user`s profiles");
         storage.clear();
+    }
+
+    @Override
+    public void addFriend(Integer userId, Integer friendId) {
+        log.debug("User {} adding friend {}", userId, friendId);
+        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
+    }
+
+    @Override
+    public void deleteFriend(Integer userId, Integer friendId) {
+        log.debug("User {} deleting friend {}", userId, friendId);
+        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+    }
+
+    @Override
+    public Collection<User> getAllFriends(Integer id) {
+        log.debug("Getting friend list of user {}", id);
+        ArrayList<User> friendList = new ArrayList<>();
+        User user = getUser(id);
+        for (Integer friendId : user.getFriends()) {
+            friendList.add(getUser(friendId));
+        }
+        return friendList;
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Integer firstUserId, Integer secondUserId) {
+        log.debug("Getting common friend list of users {} and {}", firstUserId, secondUserId);
+        User user1 = getUser(firstUserId);
+        User user2 = getUser(secondUserId);
+        List<Integer> commonIds = user1.getFriends().stream()
+                .filter(user2.getFriends()::contains)
+                .toList();
+
+        List<User> commonFriends = new ArrayList<>();
+        for (Integer friendId : commonIds) {
+            commonFriends.add(getUser(friendId));
+        }
+        return commonFriends;
     }
 
     private Integer generateId() {
