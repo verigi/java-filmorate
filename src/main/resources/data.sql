@@ -5,7 +5,8 @@ INSERT INTO GENRE (NAME)
     ('Thriller'),
     ('Action'),
     ('Documentary'),
-    ('Biography');
+    ('Biography'),
+    ('Musical');
 
 INSERT INTO MPA (NAME)
     VALUES ('G'),

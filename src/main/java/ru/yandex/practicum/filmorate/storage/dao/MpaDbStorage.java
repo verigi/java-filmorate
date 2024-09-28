@@ -26,13 +26,13 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Collection<Mpa> getAllMpa() {
-        String sql = "SELECT mpa_id FROM mpa";
+        String sql = "SELECT * FROM mpa";
         return jdbcTemplate.query(sql, mpaRowMapper);
     }
 
     @Override
     public Optional<Mpa> getMpaById(Integer id) {
-        String sql = "SELECT mpa_id FROM mpa WHERE mpa_id = ?";
+        String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
         return jdbcTemplate.query(sql, mpaRowMapper, id)
                 .stream()
                 .findFirst();
