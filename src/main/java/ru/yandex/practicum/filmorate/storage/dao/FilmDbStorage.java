@@ -27,6 +27,8 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     @Autowired
     private UserDbStorage userDbStorage;
+    @Autowired
+    private GenreDbStorage genreDbStorage;
 
     private static final RowMapper<Film> filmRowMapper = (rs, rowNum) -> {
         Film film = new Film();
@@ -179,13 +181,14 @@ public class FilmDbStorage implements FilmStorage {
         return new HashSet<>(userIds);
     }
 
-    private Set<Genre> extractGenres(Integer filmId) {
-        String sql = "SELECT g.genre_id, g.name " +
-                "FROM genre g " +
+    public Set<Genre> extractGenres(int filmId) {
+        String sql = "SELECT g.genre_id, g.name FROM genre g " +
                 "JOIN film_genre fg ON g.genre_id = fg.genre_id " +
                 "WHERE fg.film_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) ->
-                new Genre(rs.getInt("genre_id"), rs.getString("name")), filmId));
+        List<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) ->
+                new Genre(rs.getInt("genre_id"), rs.getString("name")), filmId);
+
+        return new HashSet<>(genres);
     }
 }
 

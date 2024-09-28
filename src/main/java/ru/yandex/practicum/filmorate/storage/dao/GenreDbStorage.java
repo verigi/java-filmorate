@@ -26,13 +26,13 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Collection<Genre> getAllGenres() {
-        String sql = "SELECT * FROM genre";
+        String sql = "SELECT genre_id FROM genre";
         return jdbcTemplate.query(sql, genreRowMapper);
     }
 
     @Override
     public Optional<Genre> getGenreById(Integer id) {
-        String sql = "SELECT * FROM genre WHERE genre_id = ?";
+        String sql = "SELECT genre_id FROM genre WHERE genre_id = ?";
         return jdbcTemplate.query(sql, genreRowMapper, id)
                 .stream()
                 .findFirst();
