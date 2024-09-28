@@ -33,7 +33,14 @@ public class FilmTest {
     @Test
     @DisplayName("Null name check")
     public void shouldNotCreateNewFilmNullName() {
-        Assertions.assertThrows(NullPointerException.class, () -> defaultFilm.setName(null));
+        Film film = Film.builder()
+                .name(null)
+                .description("Some description")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(60)
+                .build();
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Assertions.assertEquals(2, violations.size());
     }
 
     @Test
@@ -47,9 +54,7 @@ public class FilmTest {
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertThrows(NullPointerException.class, () -> defaultFilm.setName(null));
-    }
+        Assertions.assertEquals(1, violations.size());}
 
     @Test
     @DisplayName("Long description check")
