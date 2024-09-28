@@ -56,7 +56,9 @@ public class FilmDbStorage implements FilmStorage {
             statement.setInt(5, film.getMpa().getId());
             return statement;
         }, keyHolder);
-
+        if (film.getGenre() != null && !film.getGenre().isEmpty()) {
+            insertFilmGenres(film.getId(), film.getGenre());
+        }
         film.setId(keyHolder.getKey().intValue());
         updateFilmGenres(film.getId(), film.getGenre());
 
@@ -163,6 +165,11 @@ public class FilmDbStorage implements FilmStorage {
                 "LIMIT ?";
 
         return jdbcTemplate.query(sql, filmRowMapper, filmCount);
+    }
+
+    private void insertFilmGenres(int filmId, Set<Genre> genres) {
+        String sql = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
+        genres.forEach(genre -> jdbcTemplate.update(sql, filmId, genre.getId()));
     }
 
     private void updateFilmGenres(Integer filmId, Set<Genre> genres) {
