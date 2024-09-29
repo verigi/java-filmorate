@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
@@ -33,8 +34,13 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Optional<Genre> getGenre(Integer id) {
         String sql = "SELECT * FROM genre WHERE genre_id = ?";
-        return jdbcTemplate.query(sql, genreRowMapper, id)
+        Optional<Genre> genre = jdbcTemplate.query(sql, genreRowMapper, id)
                 .stream()
                 .findFirst();
+        if (genre.isEmpty()) {
+            log.warn("Genre with id " + id + " was not found.");
+            throw new GenreNotFoundException("Incorrect id");
+        }
+        return genre;
     }
 }
