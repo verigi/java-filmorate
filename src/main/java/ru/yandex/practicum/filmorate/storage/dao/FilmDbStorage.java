@@ -60,9 +60,6 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             addGenresToFilm(film.getId(), film.getGenres());
         }
-        Set<Genre> genres = extractGenres(film.getId());
-        film.setGenres(genres);
-
         return film;
     }
 
