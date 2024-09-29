@@ -178,13 +178,12 @@ public class FilmDbStorage implements FilmStorage {
         return new HashSet<>(userIds);
     }
 
-    private Set<Genre> extractGenres(int filmId) {
+    public Set<Genre> extractGenres(int filmId) {
         String sql = "SELECT g.genre_id, g.name FROM genre g " +
                 "JOIN film_genre fg ON g.genre_id = fg.genre_id " +
                 "WHERE fg.film_id = ?";
         List<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) ->
                 new Genre(rs.getInt("genre_id"), rs.getString("name")), filmId);
-
         return new HashSet<>(genres);
     }
 }
