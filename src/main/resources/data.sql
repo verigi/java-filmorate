@@ -1,12 +1,12 @@
 INSERT INTO GENRE (NAME)
-    VALUES ('Comedy'),
-    ('Drama'),
-    ('Cartoon'),
-    ('Thriller'),
-    ('Action'),
-    ('Documentary'),
-    ('Biography'),
-    ('Musical');
+    VALUES ('Комедия'),
+    ('Драма'),
+    ('Мультфильм'),
+    ('Триллер'),
+    ('Боевик'),
+    ('Документальный'),
+    ('Биография'),
+    ('Мьюзикл');
 
 INSERT INTO MPA (NAME)
     VALUES ('G'),
