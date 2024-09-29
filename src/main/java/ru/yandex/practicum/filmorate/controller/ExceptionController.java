@@ -40,7 +40,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse validationException(final ValidationException e) {
         log.debug(e.getMessage());
         return new ErrorResponse(e.getMessage());
