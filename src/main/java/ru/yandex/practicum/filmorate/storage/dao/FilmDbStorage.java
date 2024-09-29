@@ -10,6 +10,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
@@ -28,6 +30,10 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     @Autowired
     private UserDbStorage userDbStorage;
+    @Autowired
+    private GenreDbStorage genreDbStorage;
+    @Autowired
+    private MpaDbStorage mpaDbStorage;
 
     private static final RowMapper<Film> filmRowMapper = (rs, rowNum) -> {
         Film film = new Film();
@@ -46,6 +52,19 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
+        Optional<Mpa> mpa = mpaDbStorage.getMpa(film.getMpa().getId());
+        if (mpa.isEmpty()) {
+            throw new MpaNotFoundException("MPA with id " + film.getMpa().getId() + " not found");
+        }
+
+        if (film.getGenres() != null) {
+            for (Genre genre : film.getGenres()) {
+                Optional<Genre> existingGenre = genreDbStorage.getGenre(genre.getId());
+                if (existingGenre.isEmpty()) {
+                    throw new GenreNotFoundException("Genre with id " + genre.getId() + " not found");
+                }
+            }
+        }
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, new String[]{"film_id"});
             statement.setString(1, film.getName());
@@ -58,7 +77,8 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            insertFilmGenre(film.getId(), new ArrayList<>(film.getGenres()));
+            ArrayList<Genre> genreOrder = new ArrayList<>(film.getGenres());
+            insertFilmGenre(film.getId(), genreOrder);
             film.setGenres(new LinkedHashSet<>(extractGenres(film.getId())));
         }
         return film;
@@ -74,8 +94,10 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(), film.getMpa().getId(), film.getId());
 
         insertFilmGenre(film.getId(), new ArrayList<>(film.getGenres()));
-        film.setGenres(new LinkedHashSet<>(extractGenres(film.getId())));
-        film.setLikes(extractLikes(film.getId()));
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>(extractGenres(film.getId()));
+        Set<Integer> likes = extractLikes(film.getId());
+        film.setGenres(genres);
+        film.setLikes(likes);
         return film;
     }
 
