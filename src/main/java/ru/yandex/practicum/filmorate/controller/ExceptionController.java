@@ -26,14 +26,14 @@ public class ExceptionController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse genreNotFoundException(final GenreNotFoundException e) {
         log.debug(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse mpaNotFoundException(final MpaNotFoundException e) {
         log.debug(e.getMessage());
         return new ErrorResponse(e.getMessage());
