@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
+import java.sql.Date;
 import java.util.*;
 
 @Slf4j
@@ -49,7 +50,7 @@ public class FilmDbStorage implements FilmStorage {
             PreparedStatement statement = connection.prepareStatement(sql, new String[]{"film_id"});
             statement.setString(1, film.getName());
             statement.setString(2, film.getDescription());
-            statement.setDate(3, java.sql.Date.valueOf(film.getReleaseDate()));
+            statement.setDate(3, Date.valueOf(film.getReleaseDate()));
             statement.setInt(4, film.getDuration());
             statement.setInt(5, film.getMpa().getId());
             return statement;
@@ -57,7 +58,7 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            updateFilmGenres(film.getId(), film.getGenres());
+            addGenresToFilm(film.getId(), film.getGenres());
         }
         Set<Genre> genres = extractGenres(film.getId());
         film.setGenres(genres);
@@ -75,7 +76,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(), film.getMpa().getId(), film.getId());
 
         if (film.getGenres() != null) {
-            updateFilmGenres(film.getId(), film.getGenres());
+            addGenresToFilm(film.getId(), film.getGenres());
         }
 
         film.setGenres(extractGenres(film.getId()));
@@ -161,7 +162,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, filmRowMapper, filmCount);
     }
 
-    private void updateFilmGenres(Integer filmId, Set<Genre> genres) {
+    private void addGenresToFilm(Integer filmId, Set<Genre> genres) {
         String deleteSql = "DELETE FROM film_genre WHERE film_id = ?";
         jdbcTemplate.update(deleteSql, filmId);
 

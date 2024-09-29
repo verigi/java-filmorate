@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.inmemory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.IncorrectUserDetails;
+import ru.yandex.practicum.filmorate.exception.IncorrectUserDetailsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -79,7 +79,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void addFriend(Integer userId, Integer friendId) {
         log.debug("User {} adding friend {}", userId, friendId);
-        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
+        if (userId.equals(friendId)) throw new IncorrectUserDetailsException("Both ids are the same");
         User user = getUser(userId);
         User friend = getUser(friendId);
         user.getFriends().add(friendId);
@@ -89,7 +89,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
         log.debug("User {} deleting friend {}", userId, friendId);
-        if (userId.equals(friendId)) throw new IncorrectUserDetails("Both ids are the same");
+        if (userId.equals(friendId)) throw new IncorrectUserDetailsException("Both ids are the same");
         User user = getUser(userId);
         User friend = getUser(friendId);
         user.getFriends().remove(friendId);

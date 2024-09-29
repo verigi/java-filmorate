@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
@@ -31,10 +32,15 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Optional<Mpa> getMpaById(Integer id) {
+    public Optional<Mpa> getMpa(Integer id) {
         String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
+
         return jdbcTemplate.query(sql, mpaRowMapper, id)
                 .stream()
-                .findFirst();
+                .findFirst()
+                .or(() -> {
+                    log.warn("Mpa id {} was not found", id);
+                    throw new MpaNotFoundException("Incorrect id");
+                });
     }
 }

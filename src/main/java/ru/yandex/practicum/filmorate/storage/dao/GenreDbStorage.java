@@ -31,7 +31,7 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public Optional<Genre> getGenreById(Integer id) {
+    public Optional<Genre> getGenre(Integer id) {
         String sql = "SELECT * FROM genre WHERE genre_id = ?";
         return jdbcTemplate.query(sql, genreRowMapper, id)
                 .stream()

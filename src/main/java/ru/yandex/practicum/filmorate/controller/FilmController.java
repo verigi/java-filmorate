@@ -47,7 +47,6 @@ public class FilmController {
         service.deleteAllFilms();
     }
 
-    // работа с лайками
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") Integer id,
                         @PathVariable("userId") Integer userId) {
@@ -63,27 +62,5 @@ public class FilmController {
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
         return service.getPopularFilms(count);
-    }
-
-    // работа с жанрами
-    @GetMapping("/genres")
-    public Collection<Genre> getAllGenres() {
-        return service.getAllGenres();
-    }
-
-    @GetMapping("/genres/{id}")
-    public Genre getGenre(@PathVariable("id") Integer id) {
-        return service.getGenre(id);
-    }
-
-    // работа с mpa
-    @GetMapping("/mpa")
-    public Collection<Mpa> getAllMpa() {
-        return service.getAllMpa();
-    }
-
-    @GetMapping("/mpa/{id}")
-    public Mpa getMpa(@PathVariable("id") Integer id) {
-        return service.getMpa(id);
     }
 }

@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface MpaStorage {
     Collection<Mpa> getAllMpa();
 
-    Optional<Mpa> getMpaById(Integer id);
+    Optional<Mpa> getMpa(Integer id);
 }
