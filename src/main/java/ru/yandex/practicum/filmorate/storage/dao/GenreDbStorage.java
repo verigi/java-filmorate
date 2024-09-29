@@ -39,8 +39,8 @@ public class GenreDbStorage implements GenreStorage {
                 .stream()
                 .findFirst()
                 .or(() -> {
-                    log.warn("Mpa id {} was not found", id);
-                    throw new MpaNotFoundException("Incorrect id");
+                    log.warn("Genre id {} was not found", id);
+                    throw new GenreNotFoundException("Incorrect id");
                 });
     }
 }
