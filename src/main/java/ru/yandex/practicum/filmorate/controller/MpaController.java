@@ -15,6 +15,7 @@ import java.util.Collection;
 @RequestMapping("/mpa")
 public class MpaController {
     private final MpaService service;
+
     @GetMapping
     public Collection<Mpa> getAllMpa() {
         return service.getAllMpa();
