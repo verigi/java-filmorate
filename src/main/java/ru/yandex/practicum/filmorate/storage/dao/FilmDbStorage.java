@@ -10,8 +10,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
@@ -52,19 +50,15 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        Optional<Mpa> mpa = mpaDbStorage.getMpa(film.getMpa().getId());
-        if (mpa.isEmpty()) {
-            throw new MpaNotFoundException("MPA with id " + film.getMpa().getId() + " not found");
-        }
+
+        Mpa mpa = mpaDbStorage.getMpa(film.getMpa().getId()).get();
 
         if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                Optional<Genre> existingGenre = genreDbStorage.getGenre(genre.getId());
-                if (existingGenre.isEmpty()) {
-                    throw new GenreNotFoundException("Genre with id " + genre.getId() + " not found");
-                }
-            }
+            film.getGenres().forEach(genre -> {
+                genreDbStorage.getGenre(genre.getId());
+        });
         }
+
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, new String[]{"film_id"});
             statement.setString(1, film.getName());
