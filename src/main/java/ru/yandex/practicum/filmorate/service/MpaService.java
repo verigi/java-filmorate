@@ -22,7 +22,6 @@ public class MpaService {
 
     public Mpa getMpa(Integer id) {
         log.debug("Getting mpa with id {}", id);
-        return storage.getMpa(id)
-                .orElseThrow(() -> new MpaNotFoundException("Mpa with id " + id + " does not exist"));
+        return storage.getMpa(id).get();
     }
 }

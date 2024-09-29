@@ -26,8 +26,7 @@ public class GenreService {
 
     public Genre getGenre(Integer id) {
         log.debug("Getting genre with id {}", id);
-        return storage.getGenre(id)
-                .orElseThrow(() -> new GenreNotFoundException("Genre with id " + id + " does not exist"));
+        return storage.getGenre(id).get();
     }
 
 }
