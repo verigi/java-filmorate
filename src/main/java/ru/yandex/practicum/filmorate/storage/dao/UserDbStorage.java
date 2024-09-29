@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@AllArgsConstructor
 @Repository
 @Primary
+@AllArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<User> userRowMapper = (ResultSet res, int rowNum) -> User.builder()

@@ -20,9 +20,9 @@ import java.sql.Date;
 import java.util.*;
 
 @Slf4j
-@AllArgsConstructor
 @Repository
 @Primary
+@AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;

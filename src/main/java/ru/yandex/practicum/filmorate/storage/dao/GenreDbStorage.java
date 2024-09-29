@@ -14,9 +14,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
-@AllArgsConstructor
 @Repository
 @Primary
+@AllArgsConstructor
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<Genre> genreRowMapper = (ResultSet res, int rowNum) -> Genre.builder()
