@@ -54,6 +54,13 @@ public class ExceptionController {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ValidationException exception) {
+        log.debug("400 {}, {}", exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse otherException(final RuntimeException e) {
         log.debug(e.getMessage());
