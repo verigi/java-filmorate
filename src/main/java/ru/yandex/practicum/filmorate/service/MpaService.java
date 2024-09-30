@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
@@ -21,6 +22,6 @@ public class MpaService {
 
     public Mpa getMpa(Integer id) {
         log.debug("Getting mpa with id {}", id);
-        return storage.getMpa(id).get();
+        return storage.getMpa(id).orElseThrow(() -> new MpaNotFoundException("Incorrect mpa id: " + id));
     }
 }
