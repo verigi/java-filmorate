@@ -12,20 +12,19 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Date;
 import java.sql.ResultSet;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Repository
 @Primary
 @AllArgsConstructor
 public class UserDbStorage implements UserStorage {
+
     private final JdbcTemplate jdbcTemplate;
+
     private static final RowMapper<User> userRowMapper = (ResultSet res, int rowNum) -> User.builder()
             .id(res.getInt("user_id"))
             .email(res.getString("email"))
@@ -48,9 +47,7 @@ public class UserDbStorage implements UserStorage {
             return statement;
         }, keyHolder);
 
-        Integer newId = keyHolder.getKey().intValue();
-        user.setId(newId);
-
+        user.setId(keyHolder.getKey().intValue());
         return user;
     }
 
@@ -60,15 +57,6 @@ public class UserDbStorage implements UserStorage {
 
         getUser(user.getId());
         jdbcTemplate.update(sql, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
-        return user;
-    }
-
-    @Override
-    public User deleteUser(Integer id) {
-        String sql = "DELETE FROM users WHERE user_id = ?";
-        User user = getUser(id);
-
-        jdbcTemplate.update(sql, id);
         return user;
     }
 
@@ -92,15 +80,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getAllUsers() {
-        String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday" +
-                " FROM users AS u";
+        String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday FROM users AS u";
         List<User> users = jdbcTemplate.query(sql, userRowMapper);
 
         for (User user : users) {
-            Set<Integer> friends = extractFriends(user.getId());
-            user.setFriends(friends != null ? friends : new HashSet<>());
+            user.setFriends(extractFriends(user.getId()));
         }
         return users;
+    }
+
+    @Override
+    public User deleteUser(Integer id) {
+        String sql = "DELETE FROM users WHERE user_id = ?";
+        User user = getUser(id);
+        jdbcTemplate.update(sql, id);
+        return user;
     }
 
     @Override
@@ -112,45 +106,43 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void addFriend(Integer userId, Integer friendId) {
         String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
-
         getUser(userId);
         getUser(friendId);
+
         jdbcTemplate.update(sql, userId, friendId);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
         String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
-
         getUser(userId);
         getUser(friendId);
+
         jdbcTemplate.update(sql, userId, friendId);
     }
 
     @Override
-    public Collection<User> getAllFriends(Integer id) {
+    public Collection<User> getAllFriends(Integer userId) {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
-                "FROM users u " +
-                "JOIN friends f ON u.user_id = f.friend_id " +
+                "FROM users AS u " +
+                "JOIN friends AS f ON u.user_id = f.friend_id " +
                 "WHERE f.user_id = ?";
 
-        getUser(id);
-        List<User> friends = jdbcTemplate.query(sql, new Object[]{id}, userRowMapper);
+        getUser(userId);
+        List<User> friends = jdbcTemplate.query(sql, new Object[]{userId}, userRowMapper);
 
         for (User friend : friends) {
-            Set<Integer> friendFriends = extractFriends(friend.getId());
-            friend.setFriends(friendFriends != null ? friendFriends : new HashSet<>());
+            friend.setFriends(extractFriends(friend.getId()));
         }
-
         return friends;
     }
 
     @Override
     public Collection<User> getCommonFriends(Integer firstUserId, Integer secondUserId) {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
-                "FROM users u " +
-                "JOIN friends f1 ON u.user_id = f1.friend_id " +
-                "JOIN friends f2 ON u.user_id = f2.friend_id " +
+                "FROM users AS u " +
+                "JOIN friends AS f1 ON u.user_id = f1.friend_id " +
+                "JOIN friends AS f2 ON u.user_id = f2.friend_id " +
                 "WHERE f1.user_id = ? AND f2.user_id = ?";
 
         getUser(firstUserId);
@@ -158,10 +150,8 @@ public class UserDbStorage implements UserStorage {
         List<User> commonFriends = jdbcTemplate.query(sql, new Object[]{firstUserId, secondUserId}, userRowMapper);
 
         for (User commonFriend : commonFriends) {
-            Set<Integer> friendFriends = extractFriends(commonFriend.getId());
-            commonFriend.setFriends(friendFriends != null ? friendFriends : new HashSet<>());
+            commonFriend.setFriends(extractFriends(commonFriend.getId()));
         }
-
         return commonFriends;
     }
 

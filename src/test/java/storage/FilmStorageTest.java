@@ -38,7 +38,7 @@ public class FilmStorageTest extends StorageTest {
     @Test
     @DisplayName("Deleting film from film storage")
     public void shouldDeleteFilmFromFilmStorage() {
-        service.deleteFilmById(1);
+        service.deleteFilm(1);
         Assertions.assertEquals(1, service.getAllFilms().size());
         Assertions.assertEquals(List.of(film2), service.getAllFilms());
     }

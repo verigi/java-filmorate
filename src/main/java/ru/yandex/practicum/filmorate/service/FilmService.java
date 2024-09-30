@@ -31,7 +31,7 @@ public class FilmService {
 
     public Film deleteFilm(Integer id) {
         log.debug("Deleting film {} from database", storage.getFilm(id).getName());
-        return storage.deleteFilmById(id);
+        return storage.deleteFilm(id);
     }
 
     public Film getFilm(Integer id) {
