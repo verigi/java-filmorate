@@ -46,9 +46,10 @@ public class FilmDbTest {
 
     @Test
     @BeforeEach
-    void clear(){
+    void clear() {
         service.deleteAllFilms();
     }
+
     @Test
     @DisplayName("Add film")
     void shouldAddFilmToDb() {
