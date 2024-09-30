@@ -50,20 +50,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilm(Film film) {
         String sql = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        if (!mpaDbStorage.getMpa(film.getMpa().getId()).isPresent()) {
-            log.debug("Mpa with id " + film.getMpa().getId() + " does not exists");
-            throw new ValidationException("Incorrect mpa");
-        }
-
-        if (film.getGenres() != null) {
-            film.getGenres().forEach(genre -> {
-                if (!genreDbStorage.getGenre(genre.getId()).isPresent()) {
-                    log.debug("Genre with id " + genre.getId() + " does not exist");
-                    throw new ValidationException("Incorrect genre with id " + genre.getId());
-                }
-            });
-        }
+        validateMpaAndGenres(film);
 
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, new String[]{"film_id"});
@@ -203,5 +190,25 @@ public class FilmDbStorage implements FilmStorage {
                 new Genre(rs.getInt("genre_id"), rs.getString("name")), filmId);
 
         return new LinkedHashSet<>(genres);
+    }
+
+    private void validateMpaAndGenres(Film film) {
+        // Проверка MPA
+        mpaDbStorage.getMpa(film.getMpa().getId())
+                .orElseThrow(() -> {
+                    log.debug("Mpa with id " + film.getMpa().getId() + " does not exist");
+                    return new ValidationException("Incorrect MPA with id " + film.getMpa().getId());
+                });
+
+        // Проверка жанров (если они присутствуют)
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            film.getGenres().forEach(genre -> {
+                genreDbStorage.getGenre(genre.getId())
+                        .orElseThrow(() -> {
+                            log.debug("Genre with id " + genre.getId() + " does not exist");
+                            return new ValidationException("Incorrect genre with id " + genre.getId());
+                        });
+            });
+        }
     }
 }
