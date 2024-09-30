@@ -34,7 +34,6 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Optional<Mpa> getMpa(Integer id) {
         String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
-
         return jdbcTemplate.query(sql, mpaRowMapper, id)
                 .stream()
                 .findFirst()
