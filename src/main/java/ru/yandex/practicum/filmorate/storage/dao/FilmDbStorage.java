@@ -51,13 +51,13 @@ public class FilmDbStorage implements FilmStorage {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
 
-//        Mpa mpa = mpaDbStorage.getMpa(film.getMpa().getId()).get();
-//
-//        if (film.getGenres() != null) {
-//            film.getGenres().forEach(genre -> {
-//                genreDbStorage.getGenre(genre.getId());
-//        });
-//        }
+        Mpa mpa = mpaDbStorage.getMpa(film.getMpa().getId()).get();
+
+        if (film.getGenres() != null) {
+            film.getGenres().forEach(genre -> {
+                genreDbStorage.getGenre(genre.getId());
+        });
+        }
 
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, new String[]{"film_id"});
