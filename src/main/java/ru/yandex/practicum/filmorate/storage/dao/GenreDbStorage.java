@@ -36,10 +36,6 @@ public class GenreDbStorage implements GenreStorage {
         String sql = "SELECT * FROM genre WHERE genre_id = ?";
         return jdbcTemplate.query(sql, genreRowMapper, id)
                 .stream()
-                .findFirst()
-                .or(() -> {
-                    log.warn("Genre id {} was not found", id);
-                    throw new GenreNotFoundException("Incorrect id");
-                });
+                .findFirst();
     }
 }

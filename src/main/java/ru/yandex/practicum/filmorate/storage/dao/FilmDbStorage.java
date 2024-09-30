@@ -193,14 +193,12 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void validateMpaAndGenres(Film film) {
-        // Проверка MPA
         mpaDbStorage.getMpa(film.getMpa().getId())
                 .orElseThrow(() -> {
                     log.debug("Mpa with id " + film.getMpa().getId() + " does not exist");
                     return new ValidationException("Incorrect MPA with id " + film.getMpa().getId());
                 });
 
-        // Проверка жанров (если они присутствуют)
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             film.getGenres().forEach(genre -> {
                 genreDbStorage.getGenre(genre.getId())
