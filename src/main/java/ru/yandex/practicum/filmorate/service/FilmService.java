@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.MpaDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
@@ -17,16 +20,17 @@ import java.util.List;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final UserDbStorage userDbStorage;
-    private final GenreDbStorage genreDbStorage;
-    private final MpaDbStorage mpaDbStorage;
+    private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, GenreDbStorage genreDbStorage, MpaDbStorage mpaDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage,
+                       GenreStorage genreStorage, MpaStorage mpaStorage) {
         this.filmStorage = filmStorage;
-        this.userDbStorage = userDbStorage;
-        this.genreDbStorage = genreDbStorage;
-        this.mpaDbStorage = mpaDbStorage;
+        this.userStorage = userStorage;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
     public Film addFilm(Film film) {
@@ -65,14 +69,14 @@ public class FilmService {
     // Работа с лайками
     public void addLike(Integer filmId, Integer userId) {
         log.debug("User {} adding like to film {}", userId, filmId);
-        userDbStorage.getUser(userId);
+        userStorage.getUser(userId);
         filmStorage.addLike(filmId, userId);
         log.debug("Like added successfully");
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("User {} deleting like from film {}", userId, filmId);
-        userDbStorage.getUser(userId);
+        userStorage.getUser(userId);
         filmStorage.deleteLike(filmId, userId);
         log.debug("Like deleted successfully");
     }
@@ -83,14 +87,14 @@ public class FilmService {
     }
 
     private void validateMpaAndGenres(Film film) {
-        mpaDbStorage.getMpa(film.getMpa().getId())
+        mpaStorage.getMpa(film.getMpa().getId())
                 .orElseThrow(() -> {
                     log.debug("MPA with id {} not found", film.getMpa().getId());
                     throw new ValidationException("Incorrect MPA id: " + film.getMpa().getId());
                 });
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            film.getGenres().forEach(genre -> genreDbStorage.getGenre(genre.getId())
+            film.getGenres().forEach(genre -> genreStorage.getGenre(genre.getId())
                     .orElseThrow(() -> {
                         log.debug("Genre with id {} not found", genre.getId());
                         throw new ValidationException("Incorrect genre id: " + genre.getId());
