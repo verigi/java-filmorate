@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.user;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -27,18 +28,9 @@ public class User {
     @Past(message = "The birthday should be in the past")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    private final Set<Integer> friends = new HashSet<>();
-
-    public User(String email, String login, LocalDate birthday) {
-        this.email = email;
-        this.login = login;
-        this.birthday = birthday;
-    }
+    private Set<Integer> friends = new HashSet<>();
 
     public String getName() {
-        if (name == null || name.equals("")) {
-            setName(login);
-        }
-        return name;
+        return (Objects.isNull(name) || name.isEmpty()) ? login : name;
     }
 }

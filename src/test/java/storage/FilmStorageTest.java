@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.storage.storageImpl.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryFilmStorage;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ public class FilmStorageTest extends StorageTest {
     @Test
     @DisplayName("Deleting film from film storage")
     public void shouldDeleteFilmFromFilmStorage() {
-        service.deleteFilmById(1);
+        service.deleteFilm(1);
         Assertions.assertEquals(1, service.getAllFilms().size());
         Assertions.assertEquals(List.of(film2), service.getAllFilms());
     }
@@ -46,7 +46,7 @@ public class FilmStorageTest extends StorageTest {
     @Test
     @DisplayName("Getting film from film storage")
     public void shouldReturnCertainFilmFromStorage() {
-        Assertions.assertEquals(film1, service.getFilmById(1));
+        Assertions.assertEquals(film1, service.getFilm(1));
     }
 
     @Test

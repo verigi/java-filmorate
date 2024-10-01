@@ -1,7 +1,7 @@
 package storage;
 
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.filmorate.storage.storageImpl.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryUserStorage;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ public class UserStorageTest extends StorageTest {
     @DisplayName("Adding user with empty name")
     public void shouldPlaceLoginAsName() {
         service.addUser(user4);
-        Assertions.assertEquals("test_login_4", service.getUserById(3).getName());
+        Assertions.assertEquals("test_login_4", service.getUser(3).getName());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class UserStorageTest extends StorageTest {
     @Test
     @DisplayName("Deleting user from user storage")
     public void shouldDeleteUserFromUserStorage() {
-        service.deleteUserById(1);
+        service.deleteUser(1);
         Assertions.assertEquals(1, service.getAllUsers().size());
         Assertions.assertEquals(List.of(user2), service.getAllUsers());
     }
@@ -50,7 +50,7 @@ public class UserStorageTest extends StorageTest {
     @Test
     @DisplayName("Getting user from user storage")
     public void shouldReturnCertainUserFromStorage() {
-        Assertions.assertEquals(user1, service.getUserById(1));
+        Assertions.assertEquals(user1, service.getUser(1));
     }
 
     @Test
