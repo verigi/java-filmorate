@@ -65,27 +65,28 @@ public class UserDbStorage implements UserStorage {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
                 "FROM users AS u WHERE u.user_id = ?";
 
-        return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
+        User user = jdbcTemplate.query(sql, new Object[]{id}, rs -> {
             if (rs.next()) {
-                User user = userRowMapper.mapRow(rs, rs.getRow());
-                user.setFriends(new LinkedHashSet<>(extractFriends().getOrDefault(id, new LinkedHashSet<>())));
-                return user;
+                return userRowMapper.mapRow(rs, rs.getRow());
             } else {
                 log.warn("User id {} was not found", id);
                 throw new UserNotFoundException("User with ID " + id + " not found.");
             }
         });
+        user.setFriends(new LinkedHashSet<>(extractFriends().getOrDefault(id, new LinkedHashSet<>())));
+
+        return user;
     }
 
     @Override
     public Collection<User> getAllUsers() {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday FROM users AS u";
+
         List<User> users = jdbcTemplate.query(sql, userRowMapper);
 
-        Map<Integer, Set<Integer>> friendsMap = extractFriends();
         users.forEach(user ->
-                user.setFriends(new LinkedHashSet<>(friendsMap.getOrDefault(user.getId(), new LinkedHashSet<>()))));
-
+                user.setFriends(new LinkedHashSet<>(extractFriends()
+                        .getOrDefault(user.getId(), new LinkedHashSet<>()))));
         return users;
     }
 

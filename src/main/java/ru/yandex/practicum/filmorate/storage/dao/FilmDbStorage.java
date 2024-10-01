@@ -63,7 +63,6 @@ public class FilmDbStorage implements FilmStorage {
         getFilm(film.getId());
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), java.sql.Date.valueOf(film.getReleaseDate()),
                 film.getDuration(), film.getMpa().getId(), film.getId());
-
         updateFilmGenres(film);
         return film;
     }
