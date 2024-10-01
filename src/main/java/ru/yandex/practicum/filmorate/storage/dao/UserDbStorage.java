@@ -63,16 +63,15 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUser(Integer id) {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
-                "FROM users AS u " +
-                "WHERE u.user_id = ?";
+                "FROM users AS u WHERE u.user_id = ?";
 
         return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
             if (rs.next()) {
                 User user = userRowMapper.mapRow(rs, rs.getRow());
-                user.setFriends(extractFriends(id));
+                user.setFriends(new LinkedHashSet<>(extractFriends().getOrDefault(id, new LinkedHashSet<>())));
                 return user;
             } else {
-                log.warn("User id " + id + " was not found");
+                log.warn("User id {} was not found", id);
                 throw new UserNotFoundException("User with ID " + id + " not found.");
             }
         });
@@ -83,9 +82,10 @@ public class UserDbStorage implements UserStorage {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday FROM users AS u";
         List<User> users = jdbcTemplate.query(sql, userRowMapper);
 
-        for (User user : users) {
-            user.setFriends(extractFriends(user.getId()));
-        }
+        Map<Integer, Set<Integer>> friendsMap = extractFriends();
+        users.forEach(user ->
+                user.setFriends(new LinkedHashSet<>(friendsMap.getOrDefault(user.getId(), new LinkedHashSet<>()))));
+
         return users;
     }
 
@@ -124,24 +124,22 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Collection<User> getAllFriends(Integer userId) {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
-                "FROM users AS u " +
-                "JOIN friends AS f ON u.user_id = f.friend_id " +
-                "WHERE f.user_id = ?";
+                "FROM users AS u JOIN friends AS f ON u.user_id = f.friend_id WHERE f.user_id = ?";
 
         getUser(userId);
         List<User> friends = jdbcTemplate.query(sql, new Object[]{userId}, userRowMapper);
 
-        for (User friend : friends) {
-            friend.setFriends(extractFriends(friend.getId()));
-        }
+        friends.forEach(friend ->
+                friend.setFriends(new LinkedHashSet<>(extractFriends()
+                        .getOrDefault(friend.getId(), new LinkedHashSet<>()))));
+
         return friends;
     }
 
     @Override
     public Collection<User> getCommonFriends(Integer firstUserId, Integer secondUserId) {
         String sql = "SELECT u.user_id, u.name, u.email, u.login, u.birthday " +
-                "FROM users AS u " +
-                "JOIN friends AS f1 ON u.user_id = f1.friend_id " +
+                "FROM users AS u JOIN friends AS f1 ON u.user_id = f1.friend_id " +
                 "JOIN friends AS f2 ON u.user_id = f2.friend_id " +
                 "WHERE f1.user_id = ? AND f2.user_id = ?";
 
@@ -149,15 +147,25 @@ public class UserDbStorage implements UserStorage {
         getUser(secondUserId);
         List<User> commonFriends = jdbcTemplate.query(sql, new Object[]{firstUserId, secondUserId}, userRowMapper);
 
-        for (User commonFriend : commonFriends) {
-            commonFriend.setFriends(extractFriends(commonFriend.getId()));
-        }
+        Map<Integer, Set<Integer>> friendsMap = extractFriends();
+        commonFriends.forEach(commonFriend ->
+                commonFriend.setFriends(new LinkedHashSet<>(friendsMap.getOrDefault(commonFriend.getId(),
+                        new LinkedHashSet<>()))));
+
         return commonFriends;
     }
 
-    private Set<Integer> extractFriends(Integer userId) {
-        String sql = "SELECT friend_id FROM friends WHERE user_id = ?";
-        List<Integer> friendIds = jdbcTemplate.queryForList(sql, new Object[]{userId}, Integer.class);
-        return new HashSet<>(friendIds);
+    private Map<Integer, Set<Integer>> extractFriends() {
+        String sql = "SELECT user_id, friend_id FROM friends";
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+
+        Map<Integer, Set<Integer>> friendsMap = new HashMap<>();
+        for (Map<String, Object> row : rows) {
+            Integer userId = (Integer) row.get("user_id");
+            Integer friendId = (Integer) row.get("friend_id");
+
+            friendsMap.computeIfAbsent(userId, friend -> new LinkedHashSet<>()).add(friendId);
+        }
+        return friendsMap;
     }
 }

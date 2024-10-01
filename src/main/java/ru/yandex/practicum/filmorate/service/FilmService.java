@@ -3,8 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,59 +16,86 @@ import java.util.List;
 @Slf4j
 @Service
 public class FilmService {
-    private final FilmStorage storage;
+    private final FilmStorage filmStorage;
+    private final UserDbStorage userDbStorage;
+    private final GenreDbStorage genreDbStorage;
+    private final MpaDbStorage mpaDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
-        this.storage = filmStorage;
+    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, GenreDbStorage genreDbStorage, MpaDbStorage mpaDbStorage) {
+        this.filmStorage = filmStorage;
+        this.userDbStorage = userDbStorage;
+        this.genreDbStorage = genreDbStorage;
+        this.mpaDbStorage = mpaDbStorage;
     }
 
     public Film addFilm(Film film) {
         log.debug("Adding film {} to database", film.getName());
-        return storage.addFilm(film);
+        validateMpaAndGenres(film);
+        return filmStorage.addFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        log.debug("Updating film {} to database", film.getName());
-        return storage.updateFilm(film);
+        log.debug("Updating film with id {}", film.getId());
+        validateMpaAndGenres(film);
+        return filmStorage.updateFilm(film);
     }
 
     public Film deleteFilm(Integer id) {
-        log.debug("Deleting film {} from database", storage.getFilm(id).getName());
-        return storage.deleteFilm(id);
+        log.debug("Deleting film with id {} from database", id);
+        return filmStorage.deleteFilm(id);
     }
 
     public Film getFilm(Integer id) {
-        log.debug("Getting film {} from database", storage.getFilm(id).getName());
-        return storage.getFilm(id);
+        log.debug("Getting film with id {} from database", id);
+        return filmStorage.getFilm(id);
     }
 
     public Collection<Film> getAllFilms() {
         log.debug("Getting list of films");
-        return storage.getAllFilms();
+        return filmStorage.getAllFilms();
     }
 
     public void deleteAllFilms() {
         log.debug("Delete all films from database");
-        storage.deleteAllFilms();
+        filmStorage.deleteAllFilms();
         log.debug("Delete successful");
     }
 
-    // работа с лайками
+    // Работа с лайками
     public void addLike(Integer filmId, Integer userId) {
         log.debug("User {} adding like to film {}", userId, filmId);
-        storage.addLike(filmId, userId);
+        userDbStorage.getUser(userId);
+        filmStorage.addLike(filmId, userId);
         log.debug("Like added successfully");
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("User {} deleting like from film {}", userId, filmId);
-        storage.deleteLike(filmId, userId);
+        userDbStorage.getUser(userId);
+        filmStorage.deleteLike(filmId, userId);
         log.debug("Like deleted successfully");
     }
 
     public List<Film> getPopularFilms(Integer filmCount) {
-        log.debug("Requesting the most popular film of {} count", filmCount);
-        return storage.getPopularFilms(filmCount);
+        log.debug("Requesting the most popular films with a count of {}", filmCount);
+        return filmStorage.getPopularFilms(filmCount);
+    }
+
+    private void validateMpaAndGenres(Film film) {
+        mpaDbStorage.getMpa(film.getMpa().getId())
+                .orElseThrow(() -> {
+                    log.debug("MPA with id {} not found", film.getMpa().getId());
+                    throw new ValidationException("Incorrect MPA id: " + film.getMpa().getId());
+                });
+
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            film.getGenres().forEach(genre -> genreDbStorage.getGenre(genre.getId())
+                    .orElseThrow(() -> {
+                        log.debug("Genre with id {} not found", genre.getId());
+                        throw new ValidationException("Incorrect genre id: " + genre.getId());
+                    }));
+        }
     }
 }
+
