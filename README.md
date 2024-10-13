@@ -108,6 +108,7 @@
 ## ER-диаграмма
 
 <details><summary><strong><span style="font-size: 18px;">Пояснения к таблицам БД</span></strong></summary>
+   
 ### Film
 - Информация о фильмах
 
@@ -223,7 +224,7 @@ LEFT JOIN (SELECT film_id, count(l.user_id) likes
            ORDER BY count(l.user_id) DESC 
            LIMIT {count})
 AS liked_films ON f.id = liked_films.film_id  
-ORDER BY liked_films.likes DESC
+ORDER BY liked_films.likes DESC;
 ```
 
 ### 9. Поиск фильмов по режиссёру
@@ -231,14 +232,31 @@ ORDER BY liked_films.likes DESC
 ```sql
 SELECT f.* FROM films_directors AS fd " +
             "LEFT JOIN films AS f ON fd.film_id = f.id " +
-            "WHERE fd.director_id = {directorId}
+            "WHERE fd.director_id = {directorId};
 ```
 
 ### 10. Получить количество лайков у фильма
 #### getLikes(Long filmId)
 ```sql
-SELECT user_id FROM likes WHERE film_id = {filmId}
+SELECT user_id FROM likes WHERE film_id = {filmId};
 ```
 </details>
 
-
+<details><summary><strong><span style="font-size: 18px;">Примеры SQL-запросов для модели User</span></strong></summary>
+### 1. Добавить пользователя
+#### create(User user)
+```sql
+INSERT INTO users(email, login, name, birthday)
+VALUES ({user.getEmail()}, {user.getLogin()}, {user.getName()}, {user.getBirthday()});
+```
+### 2. Обновить пользователя
+#### update(User newUser)
+```sql
+UPDATE users
+SET email = {newUser.getEmail()},
+    login = {newUser.getLogin()},
+    name = {newUser.getName()},
+    birthday = {newUser.getBirthday()}
+WHERE id = newUser.getId();
+```
+</details>
