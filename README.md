@@ -147,7 +147,7 @@
 ### Reviews_likes
 - Соединительная таблица для отзыва и лайков/дизлайков
 
-<details><summary><strong>Примеры SQL-запросов для модели Film</strong></summary>
+<details><summary><strong><span style="font-size: 18px;">Примеры SQL-запросов для модели Film</span></strong></summary>
    
 ### 1. Добавить фильм 
 #### create(Film film)
