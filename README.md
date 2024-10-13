@@ -25,7 +25,7 @@
 - Получить список всех фильмов.
 - Удалить фильм.
 - Поставить лайк.
-- Убрать лайк.
+- Удалить лайк.
 - Отобразить популярные фильмы.
 - Поиск фильма по названию и/или режиссёру.
 
@@ -38,6 +38,7 @@
 - Добавить пользователя в друзья.
 - Удалить пользователя из друзей.
 - Найти общих друзей с другим пользователем.
+- Получить список рекомендаций по фильмам.
 
 ### Жанры:
 - Добавить жанр.
@@ -155,6 +156,57 @@ INSERT INTO films(name,
                   releaseDate,
                   duration,
                   rating_id)
-VALUES (?, ?, ?, ?, ?)
+VALUES ({film.getName()}, 
+       {film.getDescription()}, 
+       {film.getReleaseDate()}, 
+       {film.getDuration()},
+       {film.getRating()});
 ```
 
+### 2. Обновить фильм
+#### update(Film film)
+```sql
+UPDATE Film 
+SET name = {film.getName()}, 
+    description = {film.getDescription()}, 
+    releaseDate = {film.getReleaseDate()}, 
+    duration = {film.getDuration()}, 
+    rating = {film.getRating()}, 
+WHERE id = {film.getId()};
+```
+
+### 3. Найти фильм по id
+#### findFilm(Long filmId)
+```sql
+SELECT * 
+FROM films 
+WHERE id = filmId
+```
+
+### 4. Получить список всех фильмов
+#### Collection<Film> findAll()
+```sql
+SELECT * 
+FROM films
+```
+
+### 5. Удалить фильм
+#### delete(Long filmId)
+```sql
+DELETE FROM films 
+WHERE id = filmId
+```
+
+### 6. Поставить лайк
+#### addLike(Film film, User user)
+```sql
+INSERT INTO likes(film_id, user_id) 
+VALUES (film.getId(), user.getId())
+```
+
+### 7. Удалить лайк
+#### deleteLike(Film film, User user)
+```sql
+DELETE FROM likes 
+WHERE film_id = film.getId() AND user_id = user.getId()
+```
