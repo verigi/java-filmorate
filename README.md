@@ -149,7 +149,7 @@
 - Соединительная таблица для отзыва и лайков/дизлайков
 </details>
 
-<details><summary><strong><span style="font-size: 18px;">Примеры SQL-запросов для модели Film</span></strong></summary>
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Film</span></strong></summary>
    
 ### 1. Добавить фильм 
 #### create(Film film)
@@ -230,25 +230,31 @@ ORDER BY liked_films.likes DESC;
 ### 9. Поиск фильмов по режиссёру
 #### findDirectorFilms(Long directorId)
 ```sql
-SELECT f.* FROM films_directors AS fd " +
-            "LEFT JOIN films AS f ON fd.film_id = f.id " +
-            "WHERE fd.director_id = {directorId};
+SELECT f.* FROM films_directors AS fd 
+LEFT JOIN films AS f ON fd.film_id = f.id
+WHERE fd.director_id = {directorId};
 ```
 
 ### 10. Получить количество лайков у фильма
 #### getLikes(Long filmId)
 ```sql
-SELECT user_id FROM likes WHERE film_id = {filmId};
+SELECT user_id FROM likes
+WHERE film_id = {filmId};
 ```
 </details>
 
-<details><summary><strong><span style="font-size: 18px;">Примеры SQL-запросов для модели User</span></strong></summary>
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели User</span></strong></summary>
+   
 ### 1. Добавить пользователя
 #### create(User user)
 ```sql
 INSERT INTO users(email, login, name, birthday)
-VALUES ({user.getEmail()}, {user.getLogin()}, {user.getName()}, {user.getBirthday()});
+VALUES ({user.getEmail()},
+        {user.getLogin()},
+        {user.getName()},
+        {user.getBirthday()});
 ```
+
 ### 2. Обновить пользователя
 #### update(User newUser)
 ```sql
@@ -258,5 +264,163 @@ SET email = {newUser.getEmail()},
     name = {newUser.getName()},
     birthday = {newUser.getBirthday()}
 WHERE id = newUser.getId();
+```
+
+### 3. Найти пользователя по id
+#### findUser(Long userId)
+```sql
+SELECT *
+FROM users WHERE id = {userId};
+```
+
+### 4. Получить список пользователей
+#### getUsers()
+```sql
+SELECT u.id, u.email, u.login, u.name, u.birthday, GROUP_CONCAT(f.friend_id) AS friends
+FROM users u  
+LEFT JOIN friends f ON u.id = f.user_id
+LEFT JOIN statuses AS s ON f.status_id = s.id AND s.name = 'Подтверждённая'
+GROUP BY u.id, u.email, u.login, u.name, u.birthday;
+```
+
+### 5. Удалить пользователя
+#### delete(Long id)
+```sql
+DELETE FROM users
+WHERE id = {id};
+```
+
+### 6. Добавить пользователя в друзья
+#### addFriend(Long userId, Long friendId)
+```sql
+INSERT INTO friends(user_id, friend_id, status_id)
+VALUES ({user_id}, {friend_id}, {status_id});
+```
+
+### 7. Удалить пользователя из друзей
+#### deleteFriend(Long userId, Long friendId)
+```sql
+DELETE FROM friends
+WHERE user_id = {userId} AND friend_id = {friendId};
+```
+</details>
+
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Genre</span></strong></summary>
+
+### 1. Добавить жанр
+#### create(Genre genre)
+```sql
+INSERT INTO genres(name)
+VALUES ({genre.getName()});
+```
+
+### 2. Найти жанр по id
+#### findGenre(Long genreId)
+```sql
+SELECT *
+FROM genres
+WHERE id = genreId;
+```
+
+### 3. Получить список всех жанров
+#### findAll()
+```sql
+SELECT *
+FROM genres;
+```
+</details>
+
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Mpa</span></strong></summary>
+
+### 1. Добавить рейтинг
+#### create(Mpa mpa)
+```sql
+INSERT INTO ratings(name, description)
+VALUES ({mpa.getName()},
+        {mpa.getDescription()});
+```
+
+### 2. Найти рейтинг по id
+#### findMpa(Long mpaId)
+```sql
+SELECT * FROM ratings
+WHERE id = {mpaId};
+```
+
+### 3. Получить список всех рейтингов
+#### findAll()
+```sql
+SELECT *
+FROM ratings;
+```
+</details>
+
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Review</span></strong></summary>
+
+### 1. Добавить отзыв
+#### create(Review review)
+```sql
+INSERT INTO reviews(user_id, film_id, content, isPositive, useful)
+VALUES ({review.getUserId()},
+        {review.getFilmId()},
+        {review.getContent()},
+        {review.getIsPositive()},
+        {review.getUseful()});
+```
+
+### 2. Получить список отзывов о фильме
+#### reviewsByFilmId(Long filmId, Integer count)
+```sql
+SELECT *
+FROM reviews 
+WHERE film_id = {filmId}
+LIMIT {count};
+```
+
+### 3. Поставить лайк отзыву
+#### increaseUseful(Long reviewId)
+```sql
+UPDATE reviews
+SET useful = useful + 1
+WHERE id = {reviewId};
+```
+
+### 4. Поставить дизлайк отзыву
+#### decreaseUseful(Long reviewId)
+```sql
+UPDATE reviews
+SET useful = useful - 1
+WHERE id = {reviewId};
+```
+</details>
+
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Director</span></strong></summary>
+
+### 1. Добавить режиссёра
+#### create(Director director)
+```sql
+INSERT INTO directors(name)
+VALUES ({director.getName});
+```
+
+### 2. Получить список режиссёров
+#### findAll()
+```sql
+SELECT *
+FROM directors;
+```
+
+### 3. Найти режиссёра по id
+#### findDirector(Long directorId)
+```sql
+SELECT * FROM directors
+WHERE id = {directorId};
+```
+
+### 4. Удалить режиссёра
+#### delete(Long directorId)
+```sql
+DELETE FROM directors
+WHERE id = {directorId};
 ```
 </details>
