@@ -210,3 +210,20 @@ VALUES ({film.getId()}, {user.getId()});
 DELETE FROM likes 
 WHERE film_id = {film.getId()} AND user_id = {user.getId()};
 ```
+
+### 8. Отобразить популярные фильмы
+#### findPopular(Integer count)
+```sql
+SELECT f.* FROM films AS f  
+LEFT JOIN (SELECT film_id, count(l.user_id) likes
+           FROM likes AS l  
+           GROUP BY l.film_id
+           ORDER BY count(l.user_id) DESC 
+           LIMIT {count})
+AS liked_films ON f.id = liked_films.film_id  
+ORDER BY liked_films.likes DESC
+```
+
+### 9. Поиск фильма по режиссёру
+#### 
+
