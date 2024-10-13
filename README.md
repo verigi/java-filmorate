@@ -180,33 +180,33 @@ WHERE id = {film.getId()};
 ```sql
 SELECT * 
 FROM films 
-WHERE id = {filmId}
+WHERE id = {filmId};
 ```
 
 ### 4. Получить список всех фильмов
 #### Collection<Film> findAll()
 ```sql
 SELECT * 
-FROM films
+FROM films;
 ```
 
 ### 5. Удалить фильм
 #### delete(Long filmId)
 ```sql
 DELETE FROM films 
-WHERE id = {filmId}
+WHERE id = {filmId};
 ```
 
 ### 6. Поставить лайк
 #### addLike(Film film, User user)
 ```sql
 INSERT INTO likes(film_id, user_id) 
-VALUES ({film.getId()}, {user.getId()})
+VALUES ({film.getId()}, {user.getId()});
 ```
 
 ### 7. Удалить лайк
 #### deleteLike(Film film, User user)
 ```sql
 DELETE FROM likes 
-WHERE film_id = {film.getId()} AND user_id = {user.getId()}
+WHERE film_id = {film.getId()} AND user_id = {user.getId()};
 ```
