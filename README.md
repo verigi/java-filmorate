@@ -1,4 +1,4 @@
-<span style="font-size: 24px;">Filmorate</span>
+<span style="font-size: 15px;">Filmorate</span>
 
 **Filmorate** — это учебный проект, представляющий собой бэкенд-сервис для поиска и оценки фильмов.
 
