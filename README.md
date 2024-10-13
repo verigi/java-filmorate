@@ -72,6 +72,10 @@
 - Найти режиссёра по id.
 - Удалить режиссёра.
 
+### Новостная лента:
+- Добавить событие.
+- Получить историю событий пользователя по id.
+
 ## Этапы разработки
 
 ### Разработка приложения велась в 4 этапа.
@@ -107,7 +111,7 @@
 
 ## ER-диаграмма
 
-<details><summary><strong><span style="font-size: 18px;">Пояснения к таблицам БД</span></strong></summary>
+<details><summary><strong><span style="font-size: 20px;">Пояснения к таблицам БД</span></strong></summary>
    
 ### Film
 - Информация о фильмах
@@ -422,5 +426,27 @@ WHERE id = {directorId};
 ```sql
 DELETE FROM directors
 WHERE id = {directorId};
+```
+</details>
+
+<details><summary><strong><span style="font-size: 20px;">Примеры SQL-запросов для модели Feed</span></strong></summary>
+
+### 1. Добавить событие
+#### addEvent(Feed feed)
+```sql
+INSERT INTO events (user_id, timestamp, event_type, operation, entity_id)
+VALUES ({feed.getUserId()},
+                    {feed.getTimestamp()},
+                    {feed.getEventType().name()},
+                    {feed.getOperation().name()},
+                    {feed.getEntityId()});
+```
+
+### 2. Получить историю событий пользователя по id
+#### getEventsByUserId(Long userId)
+```sql
+SELECT * FROM events
+WHERE user_id = {userId}
+ORDER BY timestamp ASC;
 ```
 </details>
