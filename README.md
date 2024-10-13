@@ -107,7 +107,7 @@
 
 ## ER-диаграмма
 
- 
+<details><summary><strong><span style="font-size: 18px;">Пояснения к таблицам БД</span></strong></summary>
 ### Film
 - Информация о фильмах
 
@@ -146,6 +146,7 @@
 
 ### Reviews_likes
 - Соединительная таблица для отзыва и лайков/дизлайков
+</details>
 
 <details><summary><strong><span style="font-size: 18px;">Примеры SQL-запросов для модели Film</span></strong></summary>
    
