@@ -147,7 +147,7 @@
 ### Reviews_likes
 - Соединительная таблица для отзыва и лайков/дизлайков
 
-<details><summary>## Примеры SQL-запросов для модели Film</summary>
+<details><summary><strong>Примеры SQL-запросов для модели Film</strong></summary>
    
 ### 1. Добавить фильм 
 #### create(Film film)
@@ -224,8 +224,9 @@ LEFT JOIN (SELECT film_id, count(l.user_id) likes
 AS liked_films ON f.id = liked_films.film_id  
 ORDER BY liked_films.likes DESC
 ```
+### 9. Поиск фильма по режиссёру
+####  
+
 </details>
 
-### 9. Поиск фильма по режиссёру
-#### 
 
