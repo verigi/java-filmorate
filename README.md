@@ -27,7 +27,7 @@
 - Поставить лайк.
 - Удалить лайк.
 - Отобразить популярные фильмы.
-- Поиск фильма по названию и/или режиссёру.
+- Поиск фильмов по названию и/или режиссёру.
 
 ### Пользователи:
 - Добавить пользователя.
@@ -224,9 +224,20 @@ LEFT JOIN (SELECT film_id, count(l.user_id) likes
 AS liked_films ON f.id = liked_films.film_id  
 ORDER BY liked_films.likes DESC
 ```
-### 9. Поиск фильма по режиссёру
-####  
 
+### 9. Поиск фильмов по режиссёру
+#### findDirectorFilms(Long directorId)
+```sql
+SELECT f.* FROM films_directors AS fd " +
+            "LEFT JOIN films AS f ON fd.film_id = f.id " +
+            "WHERE fd.director_id = {directorId}
+```
+
+### 10. Получить количество лайков у фильма
+#### getLikes(Long filmId)
+```sql
+SELECT user_id FROM likes WHERE film_id = {filmId}
+```
 </details>
 
 
